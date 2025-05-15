@@ -1,0 +1,19 @@
+"0","summary(est1_logit)
+"
+"1","A nonprob_summary object
+ - call: nonprob(data = admin, selection = ~region + private + nace + 
+    size, target = ~single_shift, pop_totals = c(`(Intercept)` = sum(weights(popyt_svy)), 
+    svytotal(~region + private + nace + size, popyt_svy)), method_selection = ""logit"")
+ - estimator type: inverse probability weighting
+ - nonprob sample size: 9344 (18%)
+ - prob sample size: none; population totals were provided
+ - population size: 51870 (fixed: true)
+ - detailed information about models are stored in list element(s): ""selection""
+----------------------------------------------------------------
+ - sum of IPW weights: 51870 
+ - distribution of IPW weights (nonprob sample):
+   - min: 1.2249; mean: 5.5512; median: 4.3816; max: 47.7121
+ - distribution of IPW probabilities (nonprob sample):
+   - min: 0.0210; mean: 0.2654; median: 0.2282; max: 0.8164
+----------------------------------------------------------------
+"

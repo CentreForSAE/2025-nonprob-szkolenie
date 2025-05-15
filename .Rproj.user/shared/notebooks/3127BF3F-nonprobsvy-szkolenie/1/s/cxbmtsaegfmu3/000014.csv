@@ -1,0 +1,12 @@
+"0","est4_boot
+"
+"1","A nonprob object
+ - estimator type: doubly robust
+ - method: glm (binomial)
+ - auxiliary variables source: survey
+ - vars selection: false
+ - variance estimator: bootstrap (with 20 samples, multicore: false)
+ - population size fixed: false
+ - naive (uncorrected) estimator: 0.6605
+ - selected estimator: 0.7035 (se=0.0000, ci=(0.7035, 0.7035))
+"

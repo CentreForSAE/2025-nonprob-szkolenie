@@ -1,0 +1,22 @@
+"0","summary(est2_logit_scad)
+"
+"1","A nonprob_summary object
+ - call: nonprob(data = admin, selection = ~region + private + nace + 
+    size, target = ~single_shift, svydesign = popyt_svy, method_selection = ""logit"", 
+    control_selection = control_sel(nfolds = 5, nlambda = 10), 
+    control_inference = control_inf(vars_selection = TRUE), verbose = T)
+ - estimator type: inverse probability weighting
+ - nonprob sample size: 9344 (18%)
+ - prob sample size: 6523 (12.6%)
+ - population size: 51870 (fixed: false)
+ - detailed information about models are stored in list element(s): ""selection""
+----------------------------------------------------------------
+ - sum of IPW weights: 52383.96 
+ - distribution of IPW weights (nonprob sample):
+   - min: 1.2043; mean: 5.6062; median: 4.8526; max: 24.0421
+ - distribution of IPW probabilities (nonprob sample):
+   - min: 0.0416; mean: 0.2712; median: 0.2383; max: 0.8179
+ - distribution of IPW probabilities (prob sample):
+   - min: 0.0416; mean: 0.2506; median: 0.2061; max: 0.8303
+----------------------------------------------------------------
+"

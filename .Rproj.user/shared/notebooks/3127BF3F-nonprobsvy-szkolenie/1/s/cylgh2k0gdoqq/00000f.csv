@@ -1,0 +1,21 @@
+"0","summary(est3_glm_biom_boot)
+"
+"1","A nonprob_summary object
+ - call: nonprob(data = admin, outcome = single_shift ~ region + private + 
+    nace + size, svydesign = popyt_svy, method_outcome = ""glm"", 
+    family_outcome = ""binomial"", control_inference = control_inf(var_method = ""bootstrap"", 
+        num_boot = 20))
+ - estimator type: mass imputation
+ - nonprob sample size: 9344 (18%)
+ - prob sample size: 6523 (12.6%)
+ - population size: 51870 (fixed: false)
+ - detailed information about models are stored in list element(s): ""outcome""
+----------------------------------------------------------------
+ - distribution of outcome residuals:
+   - single_shift: min: -0.9730; mean: 0.0000; median: 0.1075; max: 0.8564
+ - distribution of outcome predictions (nonprob sample):
+   - single_shift: min: 0.1436; mean: 0.6605; median: 0.6739; max: 0.9758
+ - distribution of outcome predictions (prob sample):
+   - single_shift: min: 0.1436; mean: 0.5930; median: 0.5938; max: 0.9785
+----------------------------------------------------------------
+"

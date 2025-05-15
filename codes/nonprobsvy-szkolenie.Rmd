@@ -1,0 +1,339 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+Instalacja pakietów
+
+```{r, eval = FALSE}
+install.packages("nonprobsvy")
+```
+
+Ładowanie pakietów
+
+```{r}
+library(nonprobsvy)
+library(survey)
+library(ggplot2)
+library(vcd)
+```
+
+Wczytujemy dane
+```{r}
+data(jvs)
+head(jvs)
+```
+
+```{r}
+data(admin)
+head(admin)
+```
+
+Na chwilę łączymy dane
+
+```{r}
+jvs$R <- 0
+jvs$single_shift <- NA
+admin$R <- 1
+admin$weight <- 1
+
+dane_szkolenie <- rbind(jvs, admin)
+```
+
+
+
+Jakie są korelacje? - oferty na jedną zmianę
+
+```{r}
+xtabs(~single_shift + private, data = admin) |> assocstats()
+xtabs(~single_shift + size, data = admin) |> assocstats()
+xtabs(~single_shift + nace, data = admin) |> assocstats()
+xtabs(~single_shift + region, data = admin) |> assocstats()
+```
+
+Jakie są korelacje? - przynależność do źródła
+
+```{r}
+xtabs(weight~single_shift + private, data = dane_szkolenie) |> assocstats()
+xtabs(weight~single_shift + size, data = dane_szkolenie) |> assocstats()
+xtabs(weight~single_shift + nace, data = dane_szkolenie) |> assocstats()
+xtabs(weight~single_shift + region, data = dane_szkolenie) |> assocstats()
+```
+
+
+Deklaracja obiektu `svydesign` z pakietu `survey`.
+
+```{r}
+popyt_svy <- svydesign(ids = ~1, 
+                       weights = ~weight, 
+                       strata = ~ size + nace + region, 
+                       data = jvs)
+svytotal(~size, popyt_svy)
+```
+
+Estymator IPW -- gdy dostępna jest tylko informacja na poziomie populacji
+
+```{r}
+est1_logit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  pop_totals = c(
+    "(Intercept)" = sum(weights(popyt_svy)),
+    svytotal(~region + private + nace + size, popyt_svy)
+    ),
+  data = admin,
+  method_selection = "logit"
+)
+
+est1_logit
+```
+
+```{r}
+summary(est1_logit)
+```
+
+```{r}
+est1_probit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  pop_totals = c(
+    "(Intercept)" = sum(weights(popyt_svy)),
+    svytotal(~region + private + nace + size, popyt_svy)
+    ),
+  data = admin,
+  method_selection = "probit"
+)
+
+est1_cloglog <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  pop_totals = c(
+    "(Intercept)" = sum(weights(popyt_svy)),
+    svytotal(~region + private + nace + size, popyt_svy)
+    ),
+  data = admin,
+  method_selection = "cloglog"
+)
+
+
+rbind(extract(est1_logit),
+      extract(est1_probit),
+      extract(est1_cloglog))
+```
+
+
+Estymator IPW -- gdy dostępna jest próba losowa
+
+```{r}
+est2_logit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "logit"
+)
+
+summary(est2_logit)
+```
+
+Estymacja wariancji z wykorzystaniem metody bootstrap.
+
+```{r}
+est2_logit_boot <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "logit",
+  control_inference = control_inf(var_method = "bootstrap", num_boot = 20),
+  verbose = TRUE
+)
+est2_logit_boot
+```
+
+To samo tylko używamy innej funkcji linkującej (probit, cloglog)
+
+```{r}
+est2_probit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "probit"
+)
+
+est2_cloglog <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "cloglog"
+)
+
+rbind(extract(est2_logit),
+      extract(est2_probit),
+      extract(est2_cloglog))
+```
+
+Dobór zmiennych do modelu, uwaga trwa długo dlatego zmieniam parametry w argumencie `controlSel(nfolds = 5, nlambda = 10)` żeby poszło to sprawnie.
+
+```{r}
+est2_logit_scad <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "logit",
+  control_inference = control_inf(vars_selection = TRUE),
+  control_selection = control_sel(nfolds = 5, nlambda = 10),
+  verbose = T
+)
+
+extract(est2_logit_scad)
+```
+
+```{r}
+summary(est2_logit_scad)
+```
+
+Masowa imputacja
+
+```{r}
+est3_glm <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm"
+)
+
+est3_glm_biom <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm",
+  family_outcome = "binomial"
+)
+
+rbind(extract(est3_glm),
+      extract(est3_glm_biom))
+```
+
+Estymacja wariancji z wykorzystaniem metody bootstrap
+
+```{r}
+est3_glm_biom_boot <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm",
+  family_outcome = "binomial",
+  control_inference = control_inf(var_method = "bootstrap", num_boot = 20)
+)
+
+summary(est3_glm_biom_boot)
+```
+
+Masowa imputacja z wykorzystaniem metod najbliższego sąsiada (PMM = predictive mean matching, NN = nearest neighbours).
+
+```{r}
+est3_pmm <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "pmm",
+  family_outcome = "binomial",
+  control_inference = control_inf(var_method = "bootstrap", num_boot = 20)
+)
+
+est3_nn5 <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "nn",
+  control_inference = control_inf(var_method = "bootstrap", num_boot = 20)
+)
+
+est3_nn3 <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "nn",
+  control_outcome = control_out(k = 3)
+)
+
+
+rbind(extract(est3_pmm),
+      extract(est3_nn3),
+      extract(est3_nn5))
+```
+
+Podwójnie odporne estymatory
+
+```{r}
+est4 <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  selection = ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm",
+  family_outcome = "binomial"
+)
+
+est4$confidence_interval
+```
+```{r}
+est4_boot <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  selection = ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm",
+  family_outcome = "binomial",
+  control_inference = control_inf(var_method = "bootstrap",
+                                  num_boot = 20)
+)
+
+extract(est4_boot)
+```
+
+DR z doborem zmiennych
+
+```{r}
+est4_sel <- nonprob(
+  outcome = single_shift ~ region + private + nace + size,
+  selection = ~ region + private + nace + size,
+  data = admin,
+  svydesign = popyt_svy,
+  method_outcome = "glm",
+  family_outcome = "binomial",
+  control_inference = control_inf(vars_selection = TRUE),
+  control_selection = control_sel(nfolds = 5, nlambda = 10),
+  control_outcome =  control_out(nfolds = 5, nlambda = 10),
+  verbose = TRUE
+)
+
+est4_sel
+```
+
+Porównanie wszystkich wyników
+
+```{r}
+wyniki <- rbind(
+  cbind(est2_logit$output,      est2_logit$confidence_interval),
+  cbind(est3_pmm$output,        est3_pmm$confidence_interval),
+  cbind(est3_nn5$output,        est3_nn5$confidence_interval),
+  cbind(est3_glm$output,        est3_glm$confidence_interval),
+  cbind(est4$output,            est4$confidence_interval),
+  cbind(est4_sel$output,        est4_sel$confidence_interval)
+) |>
+  transform(est = c("IPW", "PMM", "NN", "MI", "DR", "DR (SCAD)"))
+
+ggplot(data = wyniki, aes(y = est, x = mean, xmin = lower_bound, xmax = upper_bound)) +
+  geom_point() +
+  geom_vline(xintercept = mean(admin$single_shift), linetype = "dotted", color = "red") + 
+  geom_errorbar() 
+```
+
+

@@ -1,0 +1,27 @@
+{
+    "id": "DB712DD1",
+    "path": "~/mac/urzad/2025-nonprob-szkolenie/codes/nonprobsvy-szkolenie.Rmd",
+    "project_path": "codes/nonprobsvy-szkolenie.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1747290894140.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "322,16",
+        "scrollLine": "199"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1747291635,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1747291635886,
+    "read_only": false,
+    "read_only_alternatives": []
+}

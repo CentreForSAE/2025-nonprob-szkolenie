@@ -1,0 +1,13 @@
+"0","est1_logit
+"
+"1","A nonprob object
+ - estimator type: inverse probability weighting
+ - method: logit (mle)
+ - auxiliary variables source: population
+ - vars selection: false
+ - variance estimator: analytic
+ - population size fixed: true
+ - naive (uncorrected) estimator: 0.6605
+ - selected estimator: 0.7042 (se=0.0168, ci=(0.6713, 0.7371))
+ - caution: since `pop_size' is provided, the variance is estimated assuming that `pop_size' is known (not estimated). If this assumption is wrong, specify the appropriate `var_method' in the `control_inf()` function.
+"
