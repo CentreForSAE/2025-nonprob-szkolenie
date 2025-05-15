@@ -41,5 +41,5 @@
  - variance estimator: analytic
  - population size fixed: false
  - naive (uncorrected) estimator: 0.6605
- - selected estimator: 0.7012 (se=0.0110, ci=(0.6797, 0.7228))
+ - selected estimator: 0.7021 (se=0.0110, ci=(0.6805, 0.7236))
 "

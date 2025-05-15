@@ -73,6 +73,59 @@ popyt_svy <- svydesign(ids = ~1,
 svytotal(~size, popyt_svy)
 ```
 
+Estymator IPW -- gdy dostępna jest próba losowa
+
+```{r}
+est2_logit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "logit"
+)
+
+est2_logit
+```
+
+To samo tylko używamy innej funkcji linkującej (probit, cloglog)
+
+```{r}
+est2_probit <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "probit"
+)
+
+est2_cloglog <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "cloglog"
+)
+
+rbind(extract(est2_logit),
+      extract(est2_probit),
+      extract(est2_cloglog))
+```
+
+Estymator IPW kalibrowany
+
+```{r}
+est2_logit_cal <- nonprob(
+  selection = ~ region + private + nace + size,
+  target = ~ single_shift,
+  data = admin,
+  svydesign = popyt_svy, 
+  method_selection = "logit",
+  control_selection = control_sel(est_method = "gee")
+)
+
+est2_logit_cal
+```
+
 Estymator IPW -- gdy dostępna jest tylko informacja na poziomie populacji
 
 ```{r}
@@ -124,19 +177,7 @@ rbind(extract(est1_logit),
 ```
 
 
-Estymator IPW -- gdy dostępna jest próba losowa
 
-```{r}
-est2_logit <- nonprob(
-  selection = ~ region + private + nace + size,
-  target = ~ single_shift,
-  data = admin,
-  svydesign = popyt_svy, 
-  method_selection = "logit"
-)
-
-summary(est2_logit)
-```
 
 Estymacja wariancji z wykorzystaniem metody bootstrap.
 
@@ -153,29 +194,6 @@ est2_logit_boot <- nonprob(
 est2_logit_boot
 ```
 
-To samo tylko używamy innej funkcji linkującej (probit, cloglog)
-
-```{r}
-est2_probit <- nonprob(
-  selection = ~ region + private + nace + size,
-  target = ~ single_shift,
-  data = admin,
-  svydesign = popyt_svy, 
-  method_selection = "probit"
-)
-
-est2_cloglog <- nonprob(
-  selection = ~ region + private + nace + size,
-  target = ~ single_shift,
-  data = admin,
-  svydesign = popyt_svy, 
-  method_selection = "cloglog"
-)
-
-rbind(extract(est2_logit),
-      extract(est2_probit),
-      extract(est2_cloglog))
-```
 
 Dobór zmiennych do modelu, uwaga trwa długo dlatego zmieniam parametry w argumencie `controlSel(nfolds = 5, nlambda = 10)` żeby poszło to sprawnie.
 
@@ -196,6 +214,10 @@ extract(est2_logit_scad)
 
 ```{r}
 summary(est2_logit_scad)
+```
+
+```{r}
+coef(est2_logit_scad)
 ```
 
 Masowa imputacja
@@ -232,7 +254,7 @@ est3_glm_biom_boot <- nonprob(
   control_inference = control_inf(var_method = "bootstrap", num_boot = 20)
 )
 
-summary(est3_glm_biom_boot)
+est3_glm_biom_boot
 ```
 
 Masowa imputacja z wykorzystaniem metod najbliższego sąsiada (PMM = predictive mean matching, NN = nearest neighbours).
@@ -281,8 +303,9 @@ est4 <- nonprob(
   family_outcome = "binomial"
 )
 
-est4$confidence_interval
+est4
 ```
+
 ```{r}
 est4_boot <- nonprob(
   outcome = single_shift ~ region + private + nace + size,
@@ -322,13 +345,14 @@ Porównanie wszystkich wyników
 ```{r}
 wyniki <- rbind(
   cbind(est2_logit$output,      est2_logit$confidence_interval),
+  cbind(est2_logit_cal$output,  est2_logit_cal$confidence_interval),
   cbind(est3_pmm$output,        est3_pmm$confidence_interval),
   cbind(est3_nn5$output,        est3_nn5$confidence_interval),
   cbind(est3_glm$output,        est3_glm$confidence_interval),
   cbind(est4$output,            est4$confidence_interval),
   cbind(est4_sel$output,        est4_sel$confidence_interval)
 ) |>
-  transform(est = c("IPW", "PMM", "NN", "MI", "DR", "DR (SCAD)"))
+  transform(est = c("IPW", "IPW (cal)","PMM", "NN", "MI", "DR", "DR (SCAD)"))
 
 ggplot(data = wyniki, aes(y = est, x = mean, xmin = lower_bound, xmax = upper_bound)) +
   geom_point() +

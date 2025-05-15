@@ -1,4 +1,5 @@
-"0","summary(est2_logit_scad)"
+"0","summary(est2_logit_scad)
+"
 "1","A nonprob_summary object
  - call: nonprob(data = admin, selection = ~region + private + nace + 
     size, target = ~single_shift, svydesign = popyt_svy, method_selection = ""logit"", 
