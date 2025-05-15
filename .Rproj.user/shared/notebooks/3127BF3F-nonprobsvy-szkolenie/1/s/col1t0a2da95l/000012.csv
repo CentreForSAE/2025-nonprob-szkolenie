@@ -1,0 +1,23 @@
+"0","est2_logit_scad <- nonprob("
+"0","  selection = ~ region + private + nace + size,"
+"0","  target = ~ single_shift,"
+"0","  data = admin,"
+"0","  svydesign = popyt_svy, "
+"0","  method_selection = ""logit"","
+"0","  control_inference = control_inf(vars_selection = TRUE),"
+"0","  control_selection = control_sel(nfolds = 5, nlambda = 10),"
+"0","  verbose = T"
+"0",")"
+"1","Starting CV fold #1
+"
+"1","Starting CV fold #2
+"
+"1","Starting CV fold #3
+"
+"1","Starting CV fold #4
+"
+"1","Starting CV fold #5
+"
+"2","G3;chol2inv(chol()) failed, using ginv() instead.
+g"
+"0","extract(est2_logit_scad)"

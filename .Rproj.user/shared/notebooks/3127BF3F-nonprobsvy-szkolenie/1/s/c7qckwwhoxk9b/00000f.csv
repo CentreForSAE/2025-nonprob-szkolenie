@@ -1,5 +1,15 @@
-"0","est1_logit
-"
+"0","est1_logit <- nonprob("
+"0","  selection = ~ region + private + nace + size,"
+"0","  target = ~ single_shift,"
+"0","  pop_totals = c("
+"0","    ""(Intercept)"" = sum(weights(popyt_svy)),"
+"0","    svytotal(~region + private + nace + size, popyt_svy)"
+"0","    ),"
+"0","  data = admin,"
+"0","  method_selection = ""logit"""
+"0",")"
+"0",""
+"0","est1_logit"
 "1","A nonprob object
  - estimator type: inverse probability weighting
  - method: logit (mle)

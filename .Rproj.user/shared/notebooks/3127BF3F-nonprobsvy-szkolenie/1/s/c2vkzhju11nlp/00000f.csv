@@ -1,0 +1,36 @@
+"0","xtabs(weight~single_shift + private, data = dane_szkolenie) |> assocstats()"
+"1","                    X^2 df   P(> X^2)
+Likelihood Ratio 11.831  1 0.00058256
+Pearson          11.633  1 0.00064785
+
+Phi-Coefficient   : 0.035 
+Contingency Coeff.: 0.035 
+Cramer's V        : 0.035 
+"
+"0","xtabs(weight~single_shift + size, data = dane_szkolenie) |> assocstats()"
+"1","                    X^2 df P(> X^2)
+Likelihood Ratio 516.63  2        0
+Pearson          527.31  2        0
+
+Phi-Coefficient   : NA 
+Contingency Coeff.: 0.231 
+Cramer's V        : 0.238 
+"
+"0","xtabs(weight~single_shift + nace, data = dane_szkolenie) |> assocstats()"
+"1","                     X^2 df P(> X^2)
+Likelihood Ratio 1131.91 13        0
+Pearson           975.05 13        0
+
+Phi-Coefficient   : NA 
+Contingency Coeff.: 0.307 
+Cramer's V        : 0.323 
+"
+"0","xtabs(weight~single_shift + region, data = dane_szkolenie) |> assocstats()"
+"1","                    X^2 df   P(> X^2)
+Likelihood Ratio 47.754 15 2.7859e-05
+Pearson          47.543 15 3.0122e-05
+
+Phi-Coefficient   : NA 
+Contingency Coeff.: 0.071 
+Cramer's V        : 0.071 
+"

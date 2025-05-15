@@ -1,5 +1,13 @@
-"0","summary(est3_glm_biom_boot)
-"
+"0","est3_glm_biom_boot <- nonprob("
+"0","  outcome = single_shift ~ region + private + nace + size,"
+"0","  data = admin,"
+"0","  svydesign = popyt_svy,"
+"0","  method_outcome = ""glm"","
+"0","  family_outcome = ""binomial"","
+"0","  control_inference = control_inf(var_method = ""bootstrap"", num_boot = 20)"
+"0",")"
+"0",""
+"0","summary(est3_glm_biom_boot)"
 "1","A nonprob_summary object
  - call: nonprob(data = admin, outcome = single_shift ~ region + private + 
     nace + size, svydesign = popyt_svy, method_outcome = ""glm"", 

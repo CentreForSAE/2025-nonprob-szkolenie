@@ -38,5 +38,5 @@
  - variance estimator: bootstrap (with 20 samples, multicore: false)
  - population size fixed: false
  - naive (uncorrected) estimator: 0.6605
- - selected estimator: 0.7224 (se=0.0418, ci=(0.6404, 0.8043))
+ - selected estimator: 0.7224 (se=0.0415, ci=(0.6411, 0.8036))
 "

@@ -1,5 +1,4 @@
-"0","summary(est1_logit)
-"
+"0","summary(est1_logit)"
 "1","A nonprob_summary object
  - call: nonprob(data = admin, selection = ~region + private + nace + 
     size, target = ~single_shift, pop_totals = c(`(Intercept)` = sum(weights(popyt_svy)), 

@@ -1,0 +1,10 @@
+"0","popyt_svy <- svydesign(ids = ~1, "
+"0","                       weights = ~weight, "
+"0","                       strata = ~ size + nace + region, "
+"0","                       data = jvs)"
+"0","svytotal(~size, popyt_svy)"
+"1","      total      SE
+sizeL  8561  890.34
+sizeM 13758 1199.67
+sizeS 29551 2123.03
+"

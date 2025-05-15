@@ -13,7 +13,7 @@ install.packages("nonprobsvy")
 
 Ładowanie pakietów
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(nonprobsvy)
 library(survey)
 library(ggplot2)

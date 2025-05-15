@@ -1,0 +1,6 @@
+"0","jvs$R <- 0"
+"0","jvs$single_shift <- NA"
+"0","admin$R <- 1"
+"0","admin$weight <- 1"
+"0",""
+"0","dane_szkolenie <- rbind(jvs, admin)"
